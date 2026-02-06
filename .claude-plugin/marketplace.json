@@ -1,0 +1,12 @@
+{
+  "name": "camb-ai",
+  "owner": { "name": "CAMB AI" },
+  "plugins": [
+    {
+      "name": "camb",
+      "source": ".",
+      "description": "CAMB AI voice and translation APIs - TTS, voice cloning, dubbing, transcription",
+      "version": "1.0.0"
+    }
+  ]
+}
