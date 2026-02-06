@@ -169,6 +169,17 @@ const response = await client.textToSpeech.tts({
 await saveStreamToFile(response, 'cloned_output.wav');
 ```
 
+**Direct API (curl):**
+```bash
+curl -X POST "https://client.camb.ai/apis/create-custom-voice" \
+  -H "x-api-key: YOUR_API_KEY" \
+  -F "file=@reference.wav" \
+  -F "voice_name=my-cloned-voice" \
+  -F "gender=1" \
+  -F "language=1" \
+  -F "enhance_audio=true"
+```
+
 ---
 
 ## Translated TTS
@@ -214,6 +225,31 @@ while True:
         break
 
     time.sleep(2)
+```
+
+**Direct API (curl):**
+```bash
+# Step 1: Create translated TTS task
+curl -X POST "https://client.camb.ai/apis/translated-tts" \
+  -H "x-api-key: YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "text": "Hello, welcome to our service.",
+    "source_language": 1,
+    "target_language": 54,
+    "voice_id": 144300
+  }'
+# Returns: {"task_id": "..."}
+
+# Step 2: Poll for completion
+curl "https://client.camb.ai/apis/translated-tts/{task_id}" \
+  -H "x-api-key: YOUR_API_KEY"
+# Returns: {"status": "SUCCESS", "run_id": "..."}
+
+# Step 3: Get audio result
+curl "https://client.camb.ai/apis/tts-result/{run_id}" \
+  -H "x-api-key: YOUR_API_KEY" \
+  --output translated_output.wav
 ```
 
 ---
@@ -303,7 +339,7 @@ while True:
 
     if status == "SUCCESS":
         run_id = status_response.json()["run_id"]
-        # Get result: GET /dubbed-run-info/{run_id}
+        # Get result: GET /dub-result/{run_id}
         break
     elif status in ["ERROR", "FAILED"]:
         break
@@ -411,11 +447,66 @@ session = AgentSession(
 
 ---
 
-## API Base URL
+## REST API Endpoint Reference
 
-`https://client.camb.ai/apis`
+Base URL: `https://client.camb.ai/apis` — All requests require `x-api-key` header.
 
-All requests require `x-api-key` header.
+### TTS
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/tts` | Create async TTS task |
+| GET | `/tts/{task_id}` | Poll TTS task status |
+| GET | `/tts-result/{run_id}` | Fetch TTS audio result |
+| POST | `/tts-stream` | Stream TTS audio (real-time) |
+
+### Voice Cloning
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/create-custom-voice` | Create cloned voice (multipart form) |
+| GET | `/list-voices` | List all voices (public + custom) |
+
+### Translated TTS
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/translated-tts` | Create translated TTS task |
+| GET | `/translated-tts/{task_id}` | Poll translated TTS status |
+| GET | `/tts-result/{run_id}` | Fetch translated audio result |
+| GET | `/translation-result/{run_id}` | Fetch translated text result |
+
+### Translation (text-only)
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/translate` | Create text translation task |
+| GET | `/translate/{task_id}` | Poll translation status |
+| GET | `/translation-result/{run_id}` | Fetch translation result |
+
+### Transcription
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/transcribe` | Create transcription task (multipart form) |
+| GET | `/transcribe/{task_id}` | Poll transcription status |
+| GET | `/transcription-result/{run_id}` | Fetch transcription text |
+
+### Dubbing
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/dub` | Create dubbing task |
+| GET | `/dub/{task_id}` | Poll dubbing status |
+| GET | `/dub-result/{run_id}` | Fetch dubbed result |
+| POST | `/dub-alt-format/{run_id}/{language}` | Export in alt format (MP4, SRT, VTT, TXT) |
+
+### Language/Voice Support
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/source-languages` | List supported source languages |
+| GET | `/target-languages` | List supported target languages |
 
 ---
 

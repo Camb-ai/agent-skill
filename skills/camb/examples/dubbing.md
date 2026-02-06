@@ -51,7 +51,7 @@ def poll_dubbing(task_id):
 def get_dubbed_result(run_id):
     """Get dubbed video info."""
     response = requests.get(
-        f"{base_url}/dubbed-run-info/{run_id}",
+        f"{base_url}/dub-result/{run_id}",
         headers=headers
     )
     response.raise_for_status()
@@ -103,6 +103,13 @@ curl -X GET "https://client.camb.ai/apis/dub/{task_id}" \
   -H "x-api-key: YOUR_API_KEY"
 ```
 
+## curl - Get Dubbed Result
+
+```bash
+curl "https://client.camb.ai/apis/dub-result/{run_id}" \
+  -H "x-api-key: YOUR_API_KEY"
+```
+
 ## Supported Sources
 
 | Source | Example |
@@ -145,7 +152,9 @@ curl -H "x-api-key: YOUR_API_KEY" https://client.camb.ai/apis/target-languages
 |----------|--------|-------------|
 | `/dub` | POST | Create dubbing task |
 | `/dub/{task_id}` | GET | Check task status |
-| `/dubbed-run-info/{run_id}` | GET | Get dubbed result |
+| `/dub-result/{run_id}` | GET | Get dubbed result |
+| `/dub-alt-format/{run_id}/{language}` | POST | Export in alt format (MP4, SRT, VTT, TXT) |
+| `/dub-alt-format/{task_id}` | GET | Check alt format export status |
 
 ## The Dubbing Process
 

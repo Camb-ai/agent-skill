@@ -87,6 +87,31 @@ async function cloneVoice() {
 cloneVoice();
 ```
 
+## Direct API - curl
+
+```bash
+# Create custom voice
+curl -X POST "https://client.camb.ai/apis/create-custom-voice" \
+  -H "x-api-key: YOUR_API_KEY" \
+  -F "file=@reference.wav" \
+  -F "voice_name=my-cloned-voice" \
+  -F "gender=1" \
+  -F "language=1" \
+  -F "description=Custom cloned voice" \
+  -F "enhance_audio=true"
+
+# List all voices
+curl "https://client.camb.ai/apis/list-voices" \
+  -H "x-api-key: YOUR_API_KEY"
+```
+
+## API Endpoints
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/create-custom-voice` | Create cloned voice (multipart form) |
+| GET | `/list-voices` | List all voices (public + custom) |
+
 ## List Your Custom Voices
 
 **Python:**

@@ -102,7 +102,7 @@ async function translateAndSpeak() {
 translateAndSpeak();
 ```
 
-## Direct API - Translation
+## Direct API - Translated TTS
 
 ```python
 import requests
@@ -115,9 +115,9 @@ headers = {
     "Content-Type": "application/json"
 }
 
-# Step 1: Create translation task
+# Step 1: Create translated TTS task
 response = requests.post(
-    f"{base_url}/translation",
+    f"{base_url}/translated-tts",
     headers=headers,
     json={
         "text": "Hello, welcome to our service.",
@@ -131,7 +131,7 @@ task_id = response.json()["task_id"]
 # Step 2: Poll for completion
 while True:
     status_response = requests.get(
-        f"{base_url}/translation/{task_id}",
+        f"{base_url}/translated-tts/{task_id}",
         headers=headers
     )
     status = status_response.json()["status"]
@@ -141,9 +141,9 @@ while True:
         break
     time.sleep(2)
 
-# Step 3: Get result
+# Step 3: Get audio result
 result_response = requests.get(
-    f"{base_url}/translation-result/{run_id}",
+    f"{base_url}/tts-result/{run_id}",
     headers=headers,
     stream=True
 )
@@ -151,6 +151,30 @@ with open("translated.wav", "wb") as f:
     for chunk in result_response.iter_content(chunk_size=1024):
         if chunk:
             f.write(chunk)
+```
+
+## Direct API - curl
+
+```bash
+# Step 1: Create translated TTS task
+curl -X POST "https://client.camb.ai/apis/translated-tts" \
+  -H "x-api-key: YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "text": "Hello, welcome to our service.",
+    "source_language": 1,
+    "target_language": 54,
+    "voice_id": 144300
+  }'
+
+# Step 2: Poll for completion
+curl "https://client.camb.ai/apis/translated-tts/{task_id}" \
+  -H "x-api-key: YOUR_API_KEY"
+
+# Step 3: Get audio result
+curl "https://client.camb.ai/apis/tts-result/{run_id}" \
+  -H "x-api-key: YOUR_API_KEY" \
+  --output translated_output.wav
 ```
 
 ## Language ID Reference
